@@ -1,0 +1,34 @@
+{
+  "name": "@lendwise/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for LendWise — compare DeFi supply/borrow markets across Aave, Morpho and Compound on 8 chains.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "lendwise-mcp": "./dist/bin/stdio.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit -p tsconfig.check.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "start": "node dist/bin/stdio.js",
+    "prepublishOnly": "rm -rf dist && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
+    "mcp-handler": "^1.0.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.7"
+  }
+}
