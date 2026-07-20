@@ -4,5 +4,6 @@
     "api/mcp.ts": {
       "maxDuration": 60
     }
-  }
+  },
+  "rewrites": [{ "source": "/mcp", "destination": "/api/mcp" }]
 }

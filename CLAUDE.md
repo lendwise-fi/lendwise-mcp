@@ -47,7 +47,7 @@ Two transports, one tool registry:
 
 - `src/core/server.ts` — `registerTools()` registers the five tools. **Both entrypoints must go through this function** so the hosted and local servers can't drift apart in what they expose.
 - `src/bin/stdio.ts` — stdio binary (`npx @lendwise/mcp`). Nothing may be written to stdout except MCP protocol frames; diagnostics go to stderr.
-- `api/mcp.ts` — hosted Streamable HTTP via `mcp-handler`, deployed to Vercel at `/api/mcp`. The `basePath: '/api'` option must match where the function is mounted — without it every request 404s while stdio still works.
+- `api/mcp.ts` — hosted Streamable HTTP via `mcp-handler`, deployed to Vercel. Public URL is `mcp.lendwise.fi/mcp`, mapped by a same-app rewrite in `vercel.json` onto the function Vercel mounts at `/api/mcp`. A same-app rewrite passes the *destination* path, so `basePath: '/api'` must stay in sync with that mount (mcp-handler matches the pathname exactly against `${basePath}/mcp`) — without it every request 404s while stdio still works.
 
 Each tool lives in `src/core/tools/*.ts` and exports a handler plus a Zod raw-shape args object. `server.ts` wraps every handler in `run()`, which shapes errors as readable `isError` text: a 429 becomes `{ error: 'rate_limited', retryable: true, retryAfterSeconds }`, everything else `{ error: 'tool_failed', retryable: false }`.
 

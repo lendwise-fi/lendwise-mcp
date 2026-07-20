@@ -8,6 +8,16 @@ Read-only. It recommends; it never signs a transaction.
 
 ## Install
 
+### Hosted (Streamable HTTP)
+
+Point any MCP client at `https://mcp.lendwise.fi/mcp` — nothing to install. With Claude Code:
+
+```bash
+claude mcp add --transport http lendwise https://mcp.lendwise.fi/mcp
+```
+
+### Local (stdio)
+
 ```jsonc
 // claude_desktop_config.json / .mcp.json
 {
