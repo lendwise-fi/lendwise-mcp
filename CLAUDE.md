@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-MCP server for Lendwise — read-only DeFi market comparison (Aave V3, Morpho, Compound V3 across 8 chains). It recommends; it never signs a transaction. Holds no secrets: it speaks only HTTPS to the public Lendwise API.
+MCP server for Lendwise — read-only DeFi market comparison (Aave V3, Morpho, Compound V3 across 27 standardized chains). It recommends; it never signs a transaction. Holds no secrets: it speaks only HTTPS to the public Lendwise API.
 
 ## Commands
 
