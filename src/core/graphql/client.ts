@@ -16,13 +16,13 @@ export async function gql<T>(
   const body = await postJson<GraphQLResponse<T>>(
     GRAPHQL_ENDPOINT,
     { query, variables },
-    'The LendWise API'
+    'The Lendwise API'
   )
 
   // GraphQL reports errors in a 200 body, so this is the real error path.
   if (body.errors?.length) {
     throw new ApiError(body.errors.map((e) => e.message).join('; '))
   }
-  if (!body.data) throw new ApiError('LendWise API returned no data.')
+  if (!body.data) throw new ApiError('Lendwise API returned no data.')
   return body.data
 }

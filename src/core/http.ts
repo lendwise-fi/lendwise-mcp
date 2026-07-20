@@ -10,7 +10,7 @@ export class RateLimitedError extends Error {
 
   constructor(retryAfterSeconds: number) {
     super(
-      `LendWise API rate limit exceeded. Retryable: wait ${retryAfterSeconds}s ` +
+      `Lendwise API rate limit exceeded. Retryable: wait ${retryAfterSeconds}s ` +
         `before trying again. Do not retry immediately.`
     )
     this.name = 'RateLimitedError'

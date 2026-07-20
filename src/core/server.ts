@@ -96,7 +96,7 @@ export function registerTools(server: McpServer): McpServer {
     {
       title: 'List the market universe',
       description:
-        'List every asset, chain and protocol that LendWise actually tracks, ' +
+        'List every asset, chain and protocol that Lendwise actually tracks, ' +
         'with market counts. Call this FIRST — the filter values for ' +
         'find_best_markets must come from here, not from memory.',
       inputSchema: listMarketUniverseArgs,

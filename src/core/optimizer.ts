@@ -102,7 +102,7 @@ export function blendedApy(allocations: readonly Allocation[]): number {
 }
 
 /**
- * Call the solver through the LendWise proxy — never optimizer.lendwise.fi directly.
+ * Call the solver through the Lendwise proxy — never optimizer.lendwise.fi directly.
  *
  * The response is VALIDATED, not cast. A solver that answers 200 with
  * `success: false` (or without `allocations` at all) would otherwise blow up

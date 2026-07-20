@@ -1,6 +1,6 @@
 # @lendwise/mcp
 
-MCP server for [LendWise](https://lendwise.fi) — compare DeFi supply markets across **Aave V3**, **Morpho** and **Compound V3** on 8 chains (~700 products, ~120 assets).
+MCP server for [Lendwise](https://lendwise.fi) — compare DeFi supply markets across **Aave V3**, **Morpho** and **Compound V3** on 8 chains (~700 products, ~120 assets).
 
 It answers questions like *"I have $1,000 to place in DeFi for the next 6 months — what are the best markets?"* against real yield data, in about four tool calls.
 
@@ -20,7 +20,7 @@ Read-only. It recommends; it never signs a transaction.
 }
 ```
 
-No API key. The server holds no secrets — it speaks only HTTPS to the public LendWise API.
+No API key. The server holds no secrets — it speaks only HTTPS to the public Lendwise API.
 
 ## Tools
 

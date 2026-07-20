@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-MCP server for LendWise — read-only DeFi market comparison (Aave V3, Morpho, Compound V3 across 8 chains). It recommends; it never signs a transaction. Holds no secrets: it speaks only HTTPS to the public LendWise API.
+MCP server for Lendwise — read-only DeFi market comparison (Aave V3, Morpho, Compound V3 across 8 chains). It recommends; it never signs a transaction. Holds no secrets: it speaks only HTTPS to the public Lendwise API.
 
 ## Commands
 
@@ -23,7 +23,7 @@ Env: `LENDWISE_API_URL` (default `https://lendwise.fi`) — point at `http://loc
 
 ## Sibling repo: `../web` (the upstream API)
 
-This server is a thin client of the LendWise web app at `/Users/cedric/Projects/lendwise/web` — the API it consumes is implemented there, and most cross-cutting questions (schema fields, filters, rate limits, data quality semantics) are answered by reading that codebase. It has its own `CLAUDE.md`; read it when working across both.
+This server is a thin client of the Lendwise web app at `/Users/cedric/Projects/lendwise/web` — the API it consumes is implemented there, and most cross-cutting questions (schema fields, filters, rate limits, data quality semantics) are answered by reading that codebase. It has its own `CLAUDE.md`; read it when working across both.
 
 Key locations in `../web`:
 
@@ -66,7 +66,7 @@ Order is established exactly once, from the caller's `productIds`, and both dire
 - **`find_best_markets` defaults to `minTvlUsd: 1_000_000`.** In a thin market a headline APY is mostly noise; steering someone into one is the most plausible real-world harm this server can do. The floor is lowered deliberately, never silently.
 - **`optimize_allocation` fetches APYs in ONE batched GraphQL request** (server-side `productIds` filter). Per-product requests would burn up to 20 of the 60 req/min budget on a single call.
 - **Optimizer responses are validated, not cast** — a 200 with `success: false` or missing `allocations` must throw, not surface as a plausible $0 allocation.
-- Upstream limits: 60 GraphQL req/min/IP, 10 optimizer req/min/IP. Always call the solver through the LendWise proxy (`/api/optimizer`), never `optimizer.lendwise.fi` directly.
+- Upstream limits: 60 GraphQL req/min/IP, 10 optimizer req/min/IP. Always call the solver through the Lendwise proxy (`/api/optimizer`), never `optimizer.lendwise.fi` directly.
 - Every tool response carries the `NOT_ADVICE` disclaimer and snapshot freshness (`asOf`); rows below 50% slot completeness are flagged `reliable: false` rather than silently returned as fact.
 
 ## Versioning

@@ -1,5 +1,5 @@
 /**
- * The MCP server holds no secrets. It speaks only HTTPS to the LendWise public
+ * The MCP server holds no secrets. It speaks only HTTPS to the Lendwise public
  * API, which is what makes this repo safe to be public — there is nothing here
  * to leak. `LENDWISE_API_URL` is overridable so a local web checkout can be
  * developed against.
