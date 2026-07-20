@@ -22,7 +22,7 @@ import {
   optimizeAllocationArgs,
 } from './tools/optimize-allocation.js'
 
-export const VERSION = '0.1.0'
+export const VERSION = '0.1.1'
 
 type ToolResult = { content: { type: 'text'; text: string }[]; isError?: boolean }
 
