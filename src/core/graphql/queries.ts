@@ -31,6 +31,8 @@ export interface RewardItem {
 export interface MarketState {
   supplyAssetsUsd: number | null
   utilizationRate: number | null
+  /** Borrow snapshots only — supply documents don't select it, so it's absent there. */
+  borrowAssetsUsd?: number | null
 }
 
 export interface Quality {
@@ -47,6 +49,8 @@ export interface SnapshotRow {
   apy: ApyBreakdown
   market: MarketState
   quality: Quality
+  /** Accepted collateral assets — borrow snapshots only, absent on supply rows. */
+  collaterals?: { symbol: string }[]
   product: {
     protocol: { provider: string; name: string; chain: { id: number; name: string } }
   } | null
@@ -168,6 +172,79 @@ export const LATEST_SUPPLY_APY = /* GraphQL */ `
 `
 
 /**
+ * Borrow rows carry two fields supply rows don't: `borrowAssetsUsd` (how much of
+ * the pool is drawn) and the `collaterals` accepted against the loan. Selecting
+ * them here — not on the shared supply fragment — is deliberate: a supply market
+ * state has no `borrowAssetsUsd`, so asking for it there is a schema error.
+ */
+const BORROW_SNAPSHOT_FIELDS = /* GraphQL */ `
+  items {
+    hour
+    productId
+    asset
+    chainId
+    apy {
+      base
+      rewards
+      fees
+      net
+    }
+    market {
+      supplyAssetsUsd
+      borrowAssetsUsd
+      utilizationRate
+    }
+    quality {
+      status
+      count
+      expectedCount
+    }
+    collaterals {
+      symbol
+    }
+    product {
+      protocol {
+        provider
+        name
+        chain {
+          id
+          name
+        }
+      }
+    }
+  }
+  pagination {
+    count
+    countTotal
+    limit
+    skip
+  }
+`
+
+/**
+ * Current best borrow markets. Borrow net APY is a COST (base + fees − rewards),
+ * so the cheapest market has the LOWEST net — the opposite of supply.
+ *
+ * `orderDirection: asc` is set explicitly as defense in depth. Upstream now
+ * defaults `latestBorrowApy` to asc too (best-first, kind-aware), so this only
+ * restates that default — but pinning it here keeps the ranking correct even if
+ * that default is ever changed back, and makes the intent legible at the call
+ * site rather than depending on a server-side convention.
+ */
+export const LATEST_BORROW_APY = /* GraphQL */ `
+  query LatestBorrowApy($filters: LatestBorrowFilters, $first: Int) {
+    latestBorrowApy(
+      filters: $filters
+      first: $first
+      orderBy: apyNet
+      orderDirection: asc
+    ) {
+      ${BORROW_SNAPSHOT_FIELDS}
+    }
+  }
+`
+
+/**
  * Latest snapshot for an explicit set of products — the optimizer's APY source.
  *
  * One request for the whole batch via the server-side `productIds` filter. One
@@ -274,6 +351,36 @@ export const MARKET_DETAILS = /* GraphQL */ `
 export const MARKET_HISTORY = /* GraphQL */ `
   query MarketHistory($productId: String!, $range: String!) {
     supplyApyDaily(
+      filters: { productId: $productId, range: $range }
+      first: 500
+      orderBy: time
+      orderDirection: asc
+    ) {
+      items {
+        date
+        apy {
+          net
+          base
+          rewards
+        }
+      }
+      pagination {
+        count
+        countTotal
+      }
+    }
+  }
+`
+
+/**
+ * The borrow-side twin of MARKET_HISTORY. Same daily shape and the same
+ * mean/stddev question — but for borrow the stat measures how much the *cost*
+ * moves, not the yield. A stable borrow rate is the signal a fixed-horizon
+ * borrower needs.
+ */
+export const BORROW_HISTORY = /* GraphQL */ `
+  query BorrowHistory($productId: String!, $range: String!) {
+    borrowApyDaily(
       filters: { productId: $productId, range: $range }
       first: 500
       orderBy: time

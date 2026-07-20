@@ -30,6 +30,14 @@ describe('find_best_markets args', () => {
   it('allows lowering the floor deliberately', () => {
     expect(FindBest.parse({ minTvlUsd: 0 }).minTvlUsd).toBe(0)
   })
+
+  it('defaults kind to supply and accepts a borrow collateral filter', () => {
+    expect(FindBest.parse({}).kind).toBe('supply')
+    const borrow = FindBest.parse({ kind: 'borrow', collateral: 'WETH' })
+    expect(borrow.kind).toBe('borrow')
+    expect(borrow.collateral).toBe('WETH')
+    expect(() => FindBest.parse({ kind: 'lend' })).toThrow()
+  })
 })
 
 describe('optimize_allocation args', () => {
@@ -53,6 +61,11 @@ describe('get_market_history args', () => {
     expect(History.parse({ productId: 'x' }).range).toBe('90d')
     expect(History.parse({ productId: 'x', range: '180d' }).range).toBe('180d')
     expect(() => History.parse({ productId: 'x', range: '5y' })).toThrow()
+  })
+
+  it('defaults kind to supply and accepts borrow', () => {
+    expect(History.parse({ productId: 'x' }).kind).toBe('supply')
+    expect(History.parse({ productId: 'x', kind: 'borrow' }).kind).toBe('borrow')
   })
 })
 
@@ -95,6 +108,64 @@ describe('non-finite filtering at the tool boundary', () => {
     expect(described.apy.rewards).toBe(0.01)
     expect(described.quality.reliable).toBe(true)
     expect(described.asOf).toBe('2026-07-12T21:00:00.000Z')
+  })
+
+  it('omits borrow-only fields on a supply row', () => {
+    const row: SnapshotRow = {
+      hour: '2026-07-12T21:00:00.000Z',
+      productId: 'p',
+      asset: 'USDC',
+      chainId: 1,
+      apy: { base: 0.05, rewards: 0, fees: 0, net: 0.05 },
+      market: { supplyAssetsUsd: 1e6, utilizationRate: 0.5 },
+      quality: { status: 'complete', count: 6, expectedCount: 6 },
+      product: null,
+    }
+
+    const described = describeRow(row)
+    // A supply document selects neither, so they never appear on a supply row.
+    expect('borrowedUsd' in described).toBe(false)
+    expect('collaterals' in described).toBe(false)
+  })
+
+  it('surfaces borrowedUsd and collaterals on a borrow row', () => {
+    const row: SnapshotRow = {
+      hour: '2026-07-12T21:00:00.000Z',
+      productId: 'p:borrow',
+      asset: 'USDC',
+      chainId: 1,
+      apy: { base: 0.06, rewards: 0.01, fees: 0, net: 0.05 },
+      market: { supplyAssetsUsd: 5e6, borrowAssetsUsd: 3e6, utilizationRate: 0.6 },
+      quality: { status: 'complete', count: 6, expectedCount: 6 },
+      collaterals: [{ symbol: 'WETH' }, { symbol: 'wstETH' }],
+      product: null,
+    }
+
+    const described = describeRow(row)
+    // tvlUsd stays the supplied pool depth (what a borrower can draw against).
+    expect(described.tvlUsd).toBe(5e6)
+    expect(described.borrowedUsd).toBe(3e6)
+    expect(described.collaterals).toEqual(['WETH', 'wstETH'])
+  })
+
+  it('nulls a NaN borrowedUsd instead of returning NaN', () => {
+    const row: SnapshotRow = {
+      hour: '2026-07-12T21:00:00.000Z',
+      productId: 'p:borrow',
+      asset: 'USDC',
+      chainId: 1,
+      apy: { base: 0.06, rewards: 0, fees: 0, net: 0.06 },
+      market: { supplyAssetsUsd: 5e6, borrowAssetsUsd: NaN, utilizationRate: 0.6 },
+      quality: { status: 'complete', count: 6, expectedCount: 6 },
+      collaterals: [],
+      product: null,
+    }
+
+    const described = describeRow(row)
+    // The field is present (borrow row) but its value is unusable → null, not NaN.
+    expect('borrowedUsd' in described).toBe(true)
+    expect(described.borrowedUsd).toBeNull()
+    expect(described.collaterals).toEqual([])
   })
 
   it('flags a row built from too few slots as unreliable', () => {

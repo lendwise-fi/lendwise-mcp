@@ -63,6 +63,26 @@ describe.skipIf(!enabled)('integration (live API)', () => {
     expect(total).toBeCloseTo(1000, 0)
   }, 30_000)
 
+  it('finds real borrow markets sorted by net APY ascending (cheapest cost first)', async () => {
+    const result = await findBestMarkets({ kind: 'borrow', asset: 'USDC', limit: 5 })
+
+    expect(result.markets.length).toBeGreaterThan(0)
+
+    // Borrow net APY is a cost, so best = lowest. The order must be ascending —
+    // the opposite of supply, and not upstream's default direction.
+    const apys = result.markets.map((m) => m.apy.net ?? Infinity)
+    expect([...apys].sort((a, b) => a - b)).toEqual(apys)
+
+    for (const market of result.markets) {
+      expect(market.asset).toBe('USDC')
+      expect(market.productId).toMatch(/:borrow$/)
+      // Borrow rows carry the fields a supply row does not.
+      expect('borrowedUsd' in market).toBe(true)
+      expect(Array.isArray(market.collaterals)).toBe(true)
+      expect(Number.isNaN(market.apy.net)).toBe(false)
+    }
+  }, 30_000)
+
   it('does not report a healthy borrow market as a stalled pipeline', async () => {
     const borrow = await findBestMarkets({ asset: 'USDC', limit: 1 })
     // Derive a real borrow productId from the registry rather than composing one.
