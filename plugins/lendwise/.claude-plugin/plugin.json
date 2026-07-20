@@ -1,0 +1,13 @@
+{
+  "name": "lendwise",
+  "description": "Unified view for lending markets, one standard. Compare and optimize DeFi supply/borrow across Aave, Morpho and Compound. Read-only; it never signs a transaction.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Lendwise",
+    "url": "https://lendwise.fi"
+  },
+  "homepage": "https://lendwise.fi/docs/api/mcp",
+  "repository": "https://github.com/lendwise-fi/lendwise-mcp",
+  "license": "MIT",
+  "keywords": ["defi", "lending", "yield", "aave", "morpho", "compound", "mcp"]
+}

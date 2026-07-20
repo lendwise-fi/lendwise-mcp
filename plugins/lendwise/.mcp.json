@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "lendwise": {
+      "type": "http",
+      "url": "https://mcp.lendwise.fi/mcp"
+    }
+  }
+}

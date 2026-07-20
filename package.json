@@ -1,7 +1,7 @@
 {
   "name": "@lendwise/mcp",
   "version": "0.1.1",
-  "description": "MCP server for Lendwise — compare DeFi supply/borrow markets across Aave, Morpho and Compound on 27 standardized chains.",
+  "description": "Unified view for lending markets, one standard — MCP server to compare and optimize DeFi supply/borrow across Aave, Morpho and Compound.",
   "license": "MIT",
   "type": "module",
   "engines": {

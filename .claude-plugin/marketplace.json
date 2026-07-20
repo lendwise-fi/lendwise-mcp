@@ -1,0 +1,15 @@
+{
+  "name": "lendwise-fi",
+  "description": "Official Lendwise plugins for Claude Code — DeFi market comparison and yield optimization.",
+  "owner": {
+    "name": "Lendwise",
+    "url": "https://lendwise.fi"
+  },
+  "plugins": [
+    {
+      "name": "lendwise",
+      "source": "./plugins/lendwise",
+      "description": "Unified view for lending markets, one standard. Compare and optimize DeFi supply/borrow across Aave, Morpho and Compound — five read-only tools over live yield data."
+    }
+  ]
+}
