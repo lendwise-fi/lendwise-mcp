@@ -16,12 +16,13 @@ const handler = createMcpHandler(
   {},
   {
     // mcp-handler matches the request pathname with EXACT equality against
-    // `${basePath}/mcp`. Vercel mounts this function at '/api/mcp'; a same-app
-    // rewrite in vercel.json exposes the public '/mcp' and hands the function
-    // the *destination* path, so req.url is '/api/mcp' whether the client hits
-    // '/mcp' or '/api/mcp' — basePath must stay '/api'. Change one without the
-    // other and every request 404s while stdio still works.
-    basePath: '/api',
+    // `${basePath}/mcp`. Vercel mounts this function at '/api/mcp', and the
+    // vercel.json rewrite that exposes the public '/mcp' hands the function the
+    // ORIGINAL request path — '/mcp', not the rewrite destination (verified in
+    // prod: with basePath '/api', '/mcp' reached the function and got mcp-
+    // handler's own "Not found"). So basePath is ''. Direct '/api/mcp' hits are
+    // 308-redirected to '/mcp' in vercel.json instead of being served here.
+    basePath: '',
     maxDuration: 60,
   }
 )
