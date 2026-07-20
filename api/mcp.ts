@@ -1,6 +1,6 @@
 import { createMcpHandler } from 'mcp-handler'
 
-import { registerTools } from '../src/core/server.js'
+import { registerTools, VERSION } from '../src/core/server.js'
 
 /**
  * Hosted entrypoint — Streamable HTTP, served at https://mcp.lendwise.fi/mcp.
@@ -13,7 +13,9 @@ const handler = createMcpHandler(
   (server) => {
     registerTools(server)
   },
-  {},
+  // Without this, clients see mcp-handler's default serverInfo
+  // ("mcp-typescript server on vercel") instead of ours.
+  { serverInfo: { name: 'lendwise', version: VERSION } },
   {
     // mcp-handler matches the request pathname with EXACT equality against
     // `${basePath}/mcp`. Vercel mounts this function at '/api/mcp', and the
