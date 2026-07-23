@@ -308,7 +308,7 @@ const DETAIL_SNAPSHOT_FIELDS = /* GraphQL */ `
  */
 export const MARKET_DETAILS = /* GraphQL */ `
   query MarketDetails($productId: String!) {
-    products(filters: { productId: $productId }, first: 1) {
+    products(filters: { productIds: [$productId] }, first: 1) {
       items {
         id
         kind
@@ -339,10 +339,10 @@ export const MARKET_DETAILS = /* GraphQL */ `
         }
       }
     }
-    latestSupplyApy(filters: { productId: $productId }, first: 1) {
+    latestSupplyApy(filters: { productIds: [$productId] }, first: 1) {
       ${DETAIL_SNAPSHOT_FIELDS}
     }
-    latestBorrowApy(filters: { productId: $productId }, first: 1) {
+    latestBorrowApy(filters: { productIds: [$productId] }, first: 1) {
       ${DETAIL_SNAPSHOT_FIELDS}
     }
   }
@@ -351,7 +351,7 @@ export const MARKET_DETAILS = /* GraphQL */ `
 export const MARKET_HISTORY = /* GraphQL */ `
   query MarketHistory($productId: String!, $range: String!) {
     supplyApyDaily(
-      filters: { productId: $productId, range: $range }
+      filters: { productIds: [$productId], range: $range }
       first: 500
       orderBy: time
       orderDirection: asc
@@ -381,7 +381,7 @@ export const MARKET_HISTORY = /* GraphQL */ `
 export const BORROW_HISTORY = /* GraphQL */ `
   query BorrowHistory($productId: String!, $range: String!) {
     borrowApyDaily(
-      filters: { productId: $productId, range: $range }
+      filters: { productIds: [$productId], range: $range }
       first: 500
       orderBy: time
       orderDirection: asc

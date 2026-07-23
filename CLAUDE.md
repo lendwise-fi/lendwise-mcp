@@ -21,25 +21,25 @@ pnpm start                        # run the stdio binary from dist/
 
 Env: `LENDWISE_API_URL` (default `https://lendwise.fi`) — point at `http://localhost:3000` to develop against a local `lendwise/web` checkout.
 
-## Sibling repo: `../web` (the upstream API)
+## Sibling repo: `../lendwise` (the upstream API)
 
-This server is a thin client of the Lendwise web app at `/Users/cedric/Projects/lendwise/web` — the API it consumes is implemented there, and most cross-cutting questions (schema fields, filters, rate limits, data quality semantics) are answered by reading that codebase. It has its own `CLAUDE.md`; read it when working across both.
+This server is a thin client of the Lendwise web app at `/Users/cedric/Projects/lendwise/lendwise-fi/lendwise` — the API it consumes is implemented there, and most cross-cutting questions (schema fields, filters, rate limits, data quality semantics) are answered by reading that codebase. It has its own `CLAUDE.md`; read it when working across both.
 
-Key locations in `../web`:
+Key locations in `../lendwise`:
 
 - `src/lib/graphql/schema.ts` + `resolvers.ts` — the GraphQL schema this server's hand-written documents (`src/core/graphql/queries.ts`) must stay compatible with. When a query here fails or a field is missing, check the schema there first.
 - `src/app/api/graphql/` — the `/api/graphql` endpoint (rate limits, query cost ceiling).
 - `src/app/api/optimizer/` — the optimizer proxy this server calls (never `optimizer.lendwise.fi` directly).
 
-Local dev loop: run `pnpm dev` in `../web` (localhost:3000), then point this server at it with `LENDWISE_API_URL=http://localhost:3000` — including for integration tests (`LENDWISE_INTEGRATION=1 LENDWISE_API_URL=http://localhost:3000 pnpm test`).
+Local dev loop: run `pnpm dev` in `../lendwise` (localhost:3000), then point this server at it with `LENDWISE_API_URL=http://localhost:3000` — including for integration tests (`LENDWISE_INTEGRATION=1 LENDWISE_API_URL=http://localhost:3000 pnpm test`).
 
 ## Sibling repo: `../docs` (public documentation)
 
-The public docs site (VitePress, served at `lendwise.fi/docs`) lives at `/Users/cedric/Projects/lendwise/docs` and has its own `CLAUDE.md`. **User-facing changes to this server — new/renamed tools, changed arguments or defaults, install instructions — usually need a matching docs update there.** There is no MCP page yet; `api/` (next to `api/graphql.md`) is the natural home when one is added.
+The public docs site (VitePress, served at `lendwise.fi/docs`) lives at `/Users/cedric/Projects/lendwise/lendwise-fi/docs` and has its own `CLAUDE.md`. **User-facing changes to this server — new/renamed tools, changed arguments or defaults, install instructions — usually need a matching docs update there.** There is no MCP page yet; `api/` (next to `api/graphql.md`) is the natural home when one is added.
 
 Conventions that matter when editing docs: platform counts (chains, markets, assets) are interpolated from the `stats.data.ts` build-time loader, never hardcoded; `pnpm build` in `../docs` is the correctness check (no tests/linter there).
 
-`.claude/settings.local.json` grants access to `../web` and `../docs` via `additionalDirectories`, so files there can be read/searched directly.
+`.claude/settings.local.json` grants access to `../lendwise` and `../docs` via `additionalDirectories`, so files there can be read/searched directly.
 
 ## Architecture
 
