@@ -2,7 +2,7 @@
 
 **Unified view for lending markets. One standard.**
 
-MCP server for [Lendwise](https://lendwise.fi) — compare and optimize DeFi supply/borrow markets across **Aave V3**, **Morpho** and **Compound V3** over live yield data.
+MCP server for [Lendwise](https://lendwise.fi) — compare and optimize DeFi supply/borrow markets across **Aave V3**, **Morpho**, **Compound V3** and **Blend** (Stellar) over live yield data.
 
 It answers questions like *"I have $1,000 to place in DeFi for the next 6 months — what are the best markets?"* against real yield data, in about four tool calls.
 
