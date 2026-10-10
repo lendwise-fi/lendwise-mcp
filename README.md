@@ -78,23 +78,31 @@ Order is therefore established exactly once, from the caller's `productIds`, and
 ## Releasing
 
 Pushing a tag `vX.Y.Z` publishes `@lendwise/mcp@X.Y.Z` to npm through
-[`.github/workflows/publish.yml`](.github/workflows/publish.yml): install, typecheck, test, build,
-then `npm publish` with OIDC trusted publishing — no npm token is stored anywhere.
+[`.github/workflows/publish.yml`](.github/workflows/publish.yml), with OIDC trusted publishing —
+no npm token is stored anywhere.
 
 ```bash
 # 1. bump "version" in package.json AND VERSION in src/core/server.ts (e.g. 0.1.5),
-#    commit, push
+#    commit, push to main
 # 2. tag that commit with the same version and push the tag
 git tag v0.1.5
 git push origin v0.1.5
 ```
 
-The workflow fails before publishing if the tag, `package.json` and `VERSION` disagree, and
-skips a version already on npm, so re-running a release is safe.
+Two jobs. `build` has no permissions: it installs, typechecks, tests, builds and packs the
+tarball. `publish` runs in the `npm` environment, is the only job allowed to mint the OIDC
+token, and only publishes the tarball `build` produced, with scripts disabled. Dependency code
+never runs next to the publish credential.
+
+The workflow fails before publishing if the tagged commit is not on `main`, or if the tag,
+`package.json` and `VERSION` disagree. It skips a version already on npm, so re-running a
+release is safe.
 
 One-time setup (already needed before the first tag): on npmjs.com, `@lendwise/mcp` →
 **Settings** → **Trusted publishing** → GitHub Actions, organization `lendwise-fi`, repository
-`lendwise-mcp`, workflow `publish.yml`.
+`lendwise-mcp`, workflow `publish.yml`, environment `npm`. The `npm` environment is created on
+the first run; add a required reviewer to it in the repository settings to approve each
+release by hand.
 
 ## Rate limits
 
