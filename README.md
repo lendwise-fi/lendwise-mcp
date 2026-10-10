@@ -82,13 +82,14 @@ Pushing a tag `vX.Y.Z` publishes `@lendwise/mcp@X.Y.Z` to npm through
 then `npm publish` with OIDC trusted publishing — no npm token is stored anywhere.
 
 ```bash
-# 1. bump "version" in package.json (e.g. 0.1.5), commit, push
+# 1. bump "version" in package.json AND VERSION in src/core/server.ts (e.g. 0.1.5),
+#    commit, push
 # 2. tag that commit with the same version and push the tag
 git tag v0.1.5
 git push origin v0.1.5
 ```
 
-The workflow fails before publishing if the tag does not match `package.json`'s version, and
+The workflow fails before publishing if the tag, `package.json` and `VERSION` disagree, and
 skips a version already on npm, so re-running a release is safe.
 
 One-time setup (already needed before the first tag): on npmjs.com, `@lendwise/mcp` →

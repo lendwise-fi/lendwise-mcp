@@ -31,13 +31,18 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
-      # The tag names the version it releases: v0.1.5 publishes 0.1.5, and a
-      # tag that disagrees with package.json fails here, before npm.
-      - name: Check the tag matches package.json
+      # The tag names the version it releases: v0.1.5 publishes 0.1.5. The tag,
+      # package.json and the VERSION the server reports to MCP clients
+      # (src/core/server.ts) must all agree, or this fails before npm.
+      - name: Check the tag matches the versions in the code
         run: |
           version="$(node -p "require('./package.json').version")"
           if [ "$GITHUB_REF_NAME" != "v$version" ]; then
             echo "::error::tag $GITHUB_REF_NAME does not match package.json version $version (expected v$version)"
+            exit 1
+          fi
+          if ! grep -q "^export const VERSION = '$version'$" src/core/server.ts; then
+            echo "::error::src/core/server.ts VERSION is not '$version' (package.json): bump both"
             exit 1
           fi
 
