@@ -9,7 +9,7 @@
     {
       "name": "lendwise",
       "source": "./plugins/lendwise",
-      "description": "Unified view for lending markets, one standard. Compare and optimize DeFi supply/borrow across Aave, Morpho and Compound — five read-only tools over live yield data."
+      "description": "Unified view for lending markets, one standard. Compare and optimize DeFi supply/borrow across Aave, Morpho, Compound and Blend (Stellar) — five read-only tools over live yield data."
     }
   ]
 }

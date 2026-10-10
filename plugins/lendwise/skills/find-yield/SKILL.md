@@ -1,10 +1,10 @@
 ---
-description: Find and compare DeFi lending yields and optimize an allocation using the Lendwise tools. Use when the user asks where to place stablecoins or crypto for yield, which lending market has the best APY, how stable a market's rate is over months, or how to split an amount across markets — across Aave, Morpho and Compound.
+description: Find and compare DeFi lending yields and optimize an allocation using the Lendwise tools. Use when the user asks where to place stablecoins or crypto for yield, which lending market has the best APY, how stable a market's rate is over months, or how to split an amount across markets — across Aave, Morpho, Compound and Blend (Stellar).
 ---
 
 # Finding DeFi yield with Lendwise
 
-The `lendwise` MCP server exposes five read-only tools over live Aave / Morpho / Compound data. It compares markets; it never signs a transaction. Every answer is informational, **not financial advice** — say so.
+The `lendwise` MCP server exposes five read-only tools over live Aave / Morpho / Compound / Blend data. It compares markets; it never signs a transaction. Every answer is informational, **not financial advice** — say so.
 
 Work in this order, and never invent a filter value.
 

@@ -21,11 +21,17 @@ export const findBestMarketsArgs = {
     .string()
     .optional()
     .describe('Asset symbol, e.g. USDC. Must come from list_market_universe.'),
-  chainId: z.number().int().optional().describe('Chain ID, e.g. 1 for Ethereum.'),
-  protocol: z
-    .enum(['aave', 'morpho', 'compound'])
+  chainId: z
+    .number()
+    .int()
     .optional()
-    .describe('Protocol provider.'),
+    .describe('Chain ID, e.g. 1 for Ethereum, -1 for Stellar.'),
+  // Must list every provider the Lendwise API serves: a value missing here is
+  // a market the agent cannot filter on (Blend was, until 2026-10-10).
+  protocol: z
+    .enum(['aave', 'morpho', 'compound', 'blend'])
+    .optional()
+    .describe('Protocol provider. blend = Blend, on Stellar (chainId -1).'),
   collateral: z
     .string()
     .optional()

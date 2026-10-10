@@ -1,6 +1,6 @@
 # lendwise (Claude Code plugin)
 
-Connects Claude Code to the [Lendwise](https://lendwise.fi) MCP server — five read-only tools to compare DeFi supply/borrow markets and optimize allocations across Aave, Morpho and Compound.
+Connects Claude Code to the [Lendwise](https://lendwise.fi) MCP server — five read-only tools to compare DeFi supply/borrow markets and optimize allocations across Aave, Morpho, Compound and Blend (Stellar).
 
 It bundles the hosted transport (`https://mcp.lendwise.fi/mcp`), so there is nothing to install and no API key.
 

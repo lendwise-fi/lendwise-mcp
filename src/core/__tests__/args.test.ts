@@ -27,6 +27,13 @@ describe('find_best_markets args', () => {
     expect(() => FindBest.parse({ protocol: 'nonexistent' })).toThrow()
   })
 
+  it('accepts every provider the API serves, Blend on Stellar included', () => {
+    for (const protocol of ['aave', 'morpho', 'compound', 'blend']) {
+      expect(FindBest.parse({ protocol }).protocol).toBe(protocol)
+    }
+    expect(FindBest.parse({ protocol: 'blend', chainId: -1 }).chainId).toBe(-1)
+  })
+
   it('allows lowering the floor deliberately', () => {
     expect(FindBest.parse({ minTvlUsd: 0 }).minTvlUsd).toBe(0)
   })
