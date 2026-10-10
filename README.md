@@ -75,6 +75,26 @@ The optimizer's contract is **positional**: we send `apy: number[]`, it returns 
 
 Order is therefore established exactly once, from the caller's `productIds`, and both directions run off that single array (`buildApyVector` → `mapAllocations` in `src/core/optimizer.ts`). It is pinned by unit tests in both directions. Do not "simplify" it into a lookup by APY value.
 
+## Releasing
+
+Pushing a tag `vX.Y.Z` publishes `@lendwise/mcp@X.Y.Z` to npm through
+[`.github/workflows/publish.yml`](.github/workflows/publish.yml): install, typecheck, test, build,
+then `npm publish` with OIDC trusted publishing — no npm token is stored anywhere.
+
+```bash
+# 1. bump "version" in package.json (e.g. 0.1.5), commit, push
+# 2. tag that commit with the same version and push the tag
+git tag v0.1.5
+git push origin v0.1.5
+```
+
+The workflow fails before publishing if the tag does not match `package.json`'s version, and
+skips a version already on npm, so re-running a release is safe.
+
+One-time setup (already needed before the first tag): on npmjs.com, `@lendwise/mcp` →
+**Settings** → **Trusted publishing** → GitHub Actions, organization `lendwise-fi`, repository
+`lendwise-mcp`, workflow `publish.yml`.
+
 ## Rate limits
 
 The upstream API allows 60 GraphQL req/min/IP and 10 optimizer req/min/IP. A 429 is surfaced as an explicitly **retryable** error carrying `retryAfterSeconds` — back off, don't retry-storm.
