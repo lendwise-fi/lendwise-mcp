@@ -3,3 +3,8 @@ dist/
 .env
 .env.local
 .vercel
+
+# Agent files — kept local, not versioned
+/.claude/
+/AGENTS.md
+/CLAUDE.md
