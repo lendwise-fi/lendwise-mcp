@@ -53,20 +53,15 @@ jobs:
         with:
           node-version: 24
 
-      # The tag names the version it releases: v0.1.5 publishes 0.1.5. The tag,
-      # package.json and the VERSION the server reports to MCP clients
-      # (src/core/server.ts) must all agree.
-      - name: Check the tag matches the versions in the code
+      # The tag names the version it releases: v0.1.5 publishes 0.1.5, so it
+      # must match package.json (the server reads its VERSION from there).
+      - name: Check the tag matches package.json
         id: pkg
         run: |
           name="$(node -p "require('./package.json').name")"
           version="$(node -p "require('./package.json').version")"
           if [ "$GITHUB_REF_NAME" != "v$version" ]; then
             echo "::error::tag $GITHUB_REF_NAME does not match package.json version $version (expected v$version)"
-            exit 1
-          fi
-          if ! grep -q "^export const VERSION = '$version'$" src/core/server.ts; then
-            echo "::error::src/core/server.ts VERSION is not '$version' (package.json): bump both"
             exit 1
           fi
           echo "name=$name" >> "$GITHUB_OUTPUT"
@@ -76,6 +71,18 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+
+      # dist/ reads package.json by a relative path at runtime: check the built
+      # server resolves it, as the published package will.
+      - name: Check the built server reports the package version
+        env:
+          VERSION: ${{ steps.pkg.outputs.version }}
+        run: |
+          reported="$(node --input-type=module -e "console.log((await import('./dist/core/server.js')).VERSION)")"
+          if [ "$reported" != "$VERSION" ]; then
+            echo "::error::dist/core/server.js reports VERSION '$reported', package.json is '$VERSION'"
+            exit 1
+          fi
 
       # The exact bytes that get published, built and tested above. Packed with
       # scripts off so no prepare/prepack hook can change dist/ after the tests.

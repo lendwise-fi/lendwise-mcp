@@ -72,4 +72,4 @@ Order is established exactly once, from the caller's `productIds`, and both dire
 
 ## Versioning
 
-`VERSION` in `src/core/server.ts` is hardcoded and must be kept in sync with `package.json` on version bumps.
+`package.json` is the single source of the version. `VERSION` in `src/core/server.ts` reads it at runtime (`createRequire`, `../../package.json`) — a JSON import would put `package.json` outside `rootDir` and fail to compile. The relative path holds because `server.ts` sits two levels below the root in both `src/` and `dist/`: moving the file means fixing the path. Releasing: bump `package.json`, push to `main`, push tag `vX.Y.Z` (see README).

@@ -1,3 +1,5 @@
+import { createRequire } from 'node:module'
+
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 
 import { RateLimitedError } from './graphql/client.js'
@@ -22,7 +24,16 @@ import {
   optimizeAllocationArgs,
 } from './tools/optimize-allocation.js'
 
-export const VERSION = '0.1.5'
+/**
+ * The version reported to MCP clients, read from package.json so it cannot
+ * drift from the published one. Read at runtime, not imported: package.json is
+ * outside `rootDir`, so a JSON import would not compile. This file sits two
+ * levels below the package root in src/ (tests, Vercel) and dist/ (npm), so
+ * the same relative path resolves in all three.
+ */
+export const VERSION: string = (
+  createRequire(import.meta.url)('../../package.json') as { version: string }
+).version
 
 type ToolResult = { content: { type: 'text'; text: string }[]; isError?: boolean }
 

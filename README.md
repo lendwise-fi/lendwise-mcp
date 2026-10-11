@@ -82,8 +82,7 @@ Pushing a tag `vX.Y.Z` publishes `@lendwise/mcp@X.Y.Z` to npm through
 no npm token is stored anywhere.
 
 ```bash
-# 1. bump "version" in package.json AND VERSION in src/core/server.ts (e.g. 0.1.5),
-#    commit, push to main
+# 1. bump "version" in package.json (e.g. 0.1.5), commit, push to main
 # 2. tag that commit with the same version and push the tag
 git tag v0.1.5
 git push origin v0.1.5
@@ -94,8 +93,9 @@ tarball. `publish` runs in the `npm` environment, is the only job allowed to min
 token, and only publishes the tarball `build` produced, with scripts disabled. Dependency code
 never runs next to the publish credential.
 
-The workflow fails before publishing if the tagged commit is not on `main`, or if the tag,
-`package.json` and `VERSION` disagree. It skips a version already on npm, so re-running a
+`package.json` is the only place the version lives: the server reads the version it reports to
+MCP clients from it. The workflow fails before publishing if the tagged commit is not on `main`
+or if the tag does not match `package.json`. It skips a version already on npm, so re-running a
 release is safe.
 
 One-time setup (already needed before the first tag): on npmjs.com, `@lendwise/mcp` →
