@@ -104,6 +104,34 @@ One-time setup (already needed before the first tag): on npmjs.com, `@lendwise/m
 the first run; add a required reviewer to it in the repository settings to approve each
 release by hand.
 
+## Hosted deployment
+
+`mcp.lendwise.fi` is the Vercel function `api/mcp.ts`, deployed on every push to `main`.
+
+**No `packageManager` field in `package.json`** (nor `devEngines.packageManager`). With one,
+Vercel installs with its own pnpm 12 (12.2.1, whatever version and hash the field pins), which
+installs no dependency on a clean build. With a build cache it reuses stale `node_modules`
+instead: the build passes, but `api/mcp.ts` compiles as CommonJS (TS2345 in the build log, MCP
+SDK `dist/cjs` vs `dist/esm`) and the function crashes at load with `ERR_REQUIRE_ESM`. Every
+request then gets a 500 while stdio and the tests still pass. Without the field Vercel uses
+pnpm 10, which works. pnpm 12.5.1 is used locally and pinned in the publish workflow.
+
+Setting the project environment variable `ENABLE_EXPERIMENTAL_COREPACK=1` should make Vercel
+install the exact pinned version through Corepack instead. Untested here.
+
+After switching the package manager either way, redeploy once **without build cache**: a pnpm 10
+install on a cache left by pnpm 12 fails with `ERR_PNPM_NO_PKG_MANIFEST`.
+
+After any build-config change, check a preview loads: `GET /mcp` must answer 405, not 500. On
+production:
+
+```bash
+curl -s -X POST https://mcp.lendwise.fi/mcp \
+  -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"smoke","version":"0"}}}'
+# → "serverInfo":{"name":"lendwise","version":"<package.json version>"}
+```
+
 ## Rate limits
 
 The upstream API allows 60 GraphQL req/min/IP and 10 optimizer req/min/IP. A 429 is surfaced as an explicitly **retryable** error carrying `retryAfterSeconds` — back off, don't retry-storm.

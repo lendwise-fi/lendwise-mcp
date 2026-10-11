@@ -46,7 +46,7 @@ jobs:
 
       # pnpm is pinned here, not in package.json#packageManager: with that field
       # Vercel builds the hosted server with pnpm 12 and the function fails to
-      # load (ERR_REQUIRE_ESM).
+      # load (ERR_REQUIRE_ESM). See README, "Hosted deployment".
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
         with:
           version: 12.5.1
