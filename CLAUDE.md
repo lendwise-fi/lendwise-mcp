@@ -68,6 +68,7 @@ Order is established exactly once, from the caller's `productIds`, and both dire
 - **`optimize_allocation` fetches APYs in ONE batched GraphQL request** (server-side `productIds` filter). Per-product requests would burn up to 20 of the 60 req/min budget on a single call.
 - **Optimizer responses are validated, not cast** — a 200 with `success: false` or missing `allocations` must throw, not surface as a plausible $0 allocation.
 - Upstream limits: 60 GraphQL req/min/IP, 10 optimizer req/min/IP. Always call the solver through the Lendwise proxy (`/api/optimizer`), never `optimizer.lendwise.fi` directly.
+- **No `packageManager` field in `package.json`.** With it (pnpm 12), Vercel builds the hosted function with pnpm 12, compiles `api/mcp.ts` against the MCP SDK's CJS build, and the function crashes at load with `ERR_REQUIRE_ESM` — `mcp.lendwise.fi` returned 500 on every request while stdio and the tests still passed. Without it Vercel uses pnpm 10. The publish workflow pins pnpm in `pnpm/action-setup` instead. After any build-config change, check a preview answers `GET /mcp` with 405, not 500.
 - Every tool response carries the `NOT_ADVICE` disclaimer and snapshot freshness (`asOf`); rows below 50% slot completeness are flagged `reliable: false` rather than silently returned as fact.
 
 ## Versioning
