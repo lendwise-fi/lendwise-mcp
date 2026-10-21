@@ -1,8 +1,8 @@
 # @lendwise/mcp
 
-**Unified view for lending markets. One standard.**
-
 [![Lendwise MCP on mcprush](https://mcprush.com/badge/lendwise-mcp/score.svg)](https://mcprush.com/to/lendwise-mcp?ref=badge)
+
+**Unified view for lending markets. One standard.**
 
 MCP server for [Lendwise](https://lendwise.fi) — compare and optimize DeFi supply/borrow markets across **Aave V3**, **Morpho**, **Compound V3** and **Blend** (Stellar) over live yield data.
 
